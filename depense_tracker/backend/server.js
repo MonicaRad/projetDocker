@@ -1,14 +1,15 @@
 const express = require("express");
 const { Pool } = require("pg");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 const pool = new Pool({
-  host: process.env.DB_HOST || "db",
-  user: process.env.DB_USER || "app",
-  password: process.env.DB_PASSWORD || "password",
-  database: process.env.DB_NAME || "expenses",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   port: 5432,
 });
 
@@ -50,6 +51,14 @@ app.post("/api/expenses", async (req, res) => {
   );
 
   res.status(201).json(result.rows[0]);
+});
+
+app.delete("/api/expenses/:id", async (req, res) => {
+  const { id } = req.params;
+
+  await pool.query("DELETE FROM expenses WHERE id = $1", [id]);
+
+  res.status(204).end();
 });
 
 initDb()

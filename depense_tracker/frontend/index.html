@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Expense Tracker</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      input,
+      button {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .price {
+        font-weight: bold;
+      }
+
+      .meta {
+        color: #555;
+        font-size: 13px;
+      }
+
+      button.delete {
+        margin-top: 5px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 5px 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>My Expenses</h1>
+
+    <form id="form">
+      <input id="amount" type="number" placeholder="Price" required />
+      <input id="category" placeholder="Category" required />
+      <input id="description" placeholder="Description" required />
+      <input id="date" type="date" required />
+      <button type="submit">Add expense</button>
+    </form>
+
+    <ul id="list"></ul>
+
+    <script>
+      const API_URL = "http://localhost:3000/api/expenses";
+
+      function formatDate(dateStr) {
+        return new Date(dateStr).toLocaleDateString();
+      }
+
+      async function loadExpenses() {
+        const res = await fetch(API_URL);
+        const expenses = await res.json();
+
+        list.innerHTML = expenses
+          .map(
+            (e) => `
+              <li>
+                <div class="price">${e.amount} €</div>
+                <div class="meta">
+                  ${e.category} – ${e.description}<br/>
+                  Date : ${formatDate(e.date)}
+                </div>
+                <button class="delete" onclick="deleteExpense(${e.id})">
+                  Delete
+                </button>
+              </li>
+            `,
+          )
+          .join("");
+      }
+
+      async function deleteExpense(id) {
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        loadExpenses();
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: amount.value,
+            category: category.value,
+            description: description.value,
+            date: date.value,
+          }),
+        });
+
+        form.reset();
+        loadExpenses();
+      });
+
+      loadExpenses();
+    </script>
+  </body>
+</html>
