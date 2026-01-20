@@ -2,9 +2,8 @@
 
 > **⚠️ MEMBRES DU GROUPE :**
 >
-> - **NOM Prénom** (Rôle éventuel, ex: Dev)
-> - **NOM Prénom** (Rôle éventuel, ex: Infra)
-> - **NOM Prénom**
+> - **RADIFERA RASAMOELIJAONA Monica** 
+
 
 ---
 
