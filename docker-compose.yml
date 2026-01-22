@@ -1,13 +1,18 @@
 services:
   backend:
     build: depense_tracker/backend
-    ports:
-      - "3000:3000"
     environment:
       DB_HOST: db
       DB_USER: app
       DB_PASSWORD: password
       DB_NAME: expenses
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  frontend:
+    build: depense_tracker/frontend
+    restart: unless-stopped
     networks:
       - app_network
 
@@ -19,15 +24,20 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
     networks:
       - app_network
 
-  frontend:
-    build: depense_tracker/frontend
+  caddy:
+    image: caddy:2
     ports:
-      - "8080:80"
+      - "80:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+    restart: unless-stopped
     networks:
       - app_network
+
 volumes:
   db_data:
 
