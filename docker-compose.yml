@@ -44,6 +44,13 @@ services:
     networks:
       - app_network
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --url http://caddy:80
+    restart: unless-stopped
+    networks:
+      - app_network
+
 volumes:
   db_data:
 
