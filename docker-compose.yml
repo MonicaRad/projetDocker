@@ -38,6 +38,12 @@ services:
     networks:
       - app_network
 
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    networks:
+      - app_network
+
 volumes:
   db_data:
 
