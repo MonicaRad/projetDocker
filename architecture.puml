@@ -1,0 +1,41 @@
+
+---
+
+architecture.puml
+
+```puml
+@startuml
+title Architecture - Application de gestion de dépenses personnelles
+
+actor Utilisateur
+
+cloud "Internet" {
+  Utilisateur
+}
+
+node "Cloudflare" {
+  component "Cloudflare Tunnel\n(cloudflared)"
+}
+
+node "Docker Host" {
+
+  node "Réseau Docker\n(app_network)" {
+
+    component "Caddy\nReverse Proxy" as caddy
+    component "Frontend\nApplication Web" as frontend
+    component "Backend\nAPI" as backend
+    database "PostgreSQL\nBase de données" as db
+    component "Adminer\nDB Admin" as adminer
+
+    frontend --> backend : HTTP
+    backend --> db : SQL
+    adminer --> db : SQL
+    caddy --> frontend : HTTP
+    caddy --> backend : HTTP
+  }
+}
+
+Utilisateur --> "Cloudflare Tunnel\n(cloudflared)" : HTTPS
+"Cloudflare Tunnel\n(cloudflared)" --> caddy : HTTP
+
+@enduml
