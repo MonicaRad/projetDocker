@@ -1,21 +1,4 @@
 services:
-  backend:
-    build: depense_tracker/backend
-    environment:
-      DB_HOST: db
-      DB_USER: app
-      DB_PASSWORD: password
-      DB_NAME: expenses
-    restart: unless-stopped
-    networks:
-      - app_network
-
-  frontend:
-    build: depense_tracker/frontend
-    restart: unless-stopped
-    networks:
-      - app_network
-
   db:
     image: postgres:16-alpine
     environment:
@@ -27,11 +10,35 @@ services:
     restart: unless-stopped
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d expenses"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: depense_tracker/backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: app
+      DB_PASSWORD: password
+      DB_NAME: expenses
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  frontend:
+    build: depense_tracker/frontend
+    restart: unless-stopped
+    networks:
+      - app_network
 
   caddy:
     image: caddy:2
-    ports:
-      - "80:80"
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
     restart: unless-stopped
@@ -46,7 +53,7 @@ services:
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    command: tunnel --url http://caddy:80
+    command: tunnel --protocol http2 --url http://caddy:80
     restart: unless-stopped
     networks:
       - app_network
