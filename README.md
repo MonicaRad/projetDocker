@@ -42,8 +42,9 @@ Adminer permet l’administration de la base de données.
 
 Le schéma ci dessous est généré automatiquement à partir du fichier architecture.puml présent à la racine du dépôt.
 
-![Architecture du Projet](![Architecture du Projet](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/MonicaRad/projetDocker/main/architecture.puml)
-)
+![Architecture du Projet](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/MonicaRad/projetDocker/main/architecture.puml)
+
+
 
 ### Description des services
 
