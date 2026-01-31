@@ -1,20 +1,13 @@
-
----
-
-architecture.puml
-
-```puml
 @startuml
 title Architecture - Application de gestion de dépenses personnelles
 
 actor Utilisateur
 
 cloud "Internet" {
-  Utilisateur
 }
 
 node "Cloudflare" {
-  component "Cloudflare Tunnel\n(cloudflared)"
+  component "Cloudflare Tunnel\n(cloudflared)" as tunnel
 }
 
 node "Docker Host" {
@@ -35,7 +28,7 @@ node "Docker Host" {
   }
 }
 
-Utilisateur --> "Cloudflare Tunnel\n(cloudflared)" : HTTPS
-"Cloudflare Tunnel\n(cloudflared)" --> caddy : HTTP
+Utilisateur --> tunnel : HTTPS
+tunnel --> caddy : HTTP
 
 @enduml
